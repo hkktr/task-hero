@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskHero.Api", "TaskHero.Api\TaskHero.Api.csproj", "{D2B668BA-FB9B-4A9E-8ABC-3D089E6C1380}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D2B668BA-FB9B-4A9E-8ABC-3D089E6C1380}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2B668BA-FB9B-4A9E-8ABC-3D089E6C1380}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2B668BA-FB9B-4A9E-8ABC-3D089E6C1380}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2B668BA-FB9B-4A9E-8ABC-3D089E6C1380}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
