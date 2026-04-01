@@ -15,6 +15,7 @@ RUN dotnet build "./TaskHero.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./TaskHero.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+COPY TaskHero.Api/aspnetapp.pfx /app/publish
 
 FROM base AS final
 WORKDIR /app
