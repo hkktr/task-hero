@@ -11,6 +11,9 @@ services:
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ASPNETCORE_Kestrel__Certificates__Default__Password=SuperSecretPassword69
       - ASPNETCORE_Kestrel__Certificates__Default__Path=aspnetapp.pfx
+      - ConnectionStrings__Default=Server=db,1433;Database=TaskHero;User Id=sa;Password=SuperSecretDbPassword1337!;TrustServerCertificate=True;
+    depends_on:
+      - db
         
   db:
     image: mcr.microsoft.com/mssql/server:2025-latest
