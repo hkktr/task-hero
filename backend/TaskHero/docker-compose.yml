@@ -1,0 +1,13 @@
+services:
+  webapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5221:80
+      - 7217:443
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=SuperSecretPassword69
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=aspnetapp.pfx
