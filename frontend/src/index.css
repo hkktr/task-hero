@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Alata&family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-sage-100: #e8f3df;
+  --color-sage-300: #a7cb86;
+  --color-sage-600: #2d9800;
+
+  --color-coral-100: #ffe1e1;
+  --color-coral-200: #ffbebe;
+  --color-coral-500: #ff6666;
+
+  /* Figma design tokens */
+  --color-green-primary: #1c6d25;
+  --color-green-dark: #096119;
+  --color-green-light: #9df197;
+  --color-green-text: #005c15;
+  --color-green-button-text: #eaffe2;
+
+  --color-text-primary: #2f3334;
+  --color-text-secondary: #5b6061;
+
+  --color-bg-page: #f9f9f9;
+  --color-bg-input: #dfe3e4;
+  --color-bg-secondary: #f2f4f4;
+
+  --font-sans: 'Source Sans 3', system-ui, sans-serif;
+  --font-jakarta: 'Plus Jakarta Sans', sans-serif;
+  --font-alata: 'Alata', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  background: #ffffff;
+  color: #1c1b1f;
+}
+
+#root {
+  min-height: 100svh;
+}
+
+.progress-bar {
+  transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
