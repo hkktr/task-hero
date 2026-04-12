@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using TaskHero.Domain.Images;
 using TaskHero.Domain.Users;
 
 namespace TaskHero.Infrastructure.Data.Configuration;
@@ -25,5 +26,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .IsRequired();
 
         builder.OwnsOne(x => x.Password);
+
+        builder.HasMany<Image>()
+            .WithOne()
+            .HasForeignKey(x => x.UploaderId);
     }
 }

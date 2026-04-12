@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
+using TaskHero.Api.Features.Images;
 using TaskHero.Api.Features.Users;
 using TaskHero.Infrastructure;
 using TaskHero.Infrastructure.Data;
@@ -45,6 +45,7 @@ app.MapScalarApiReference(options =>
 app.UseHttpsRedirection();
 
 app.MapUserEndpoints();
+app.MapImageEndpoints();
 
 using (var scope = app.Services.CreateScope())
 {
