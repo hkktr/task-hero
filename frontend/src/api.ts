@@ -1,7 +1,7 @@
-const BASE = '/api'
+const BASE = 'https://task-hero-api.azurewebsites.net'
 
 export async function register(nickname: string, emailAddress: string, password: string) {
-  const res = await fetch(`${BASE}/users`, {
+  const res = await fetch(`${BASE}/users/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ nickname, emailAddress, password }),
@@ -13,7 +13,7 @@ export async function register(nickname: string, emailAddress: string, password:
 }
 
 export async function signIn(nickname: string, password: string): Promise<string> {
-  const res = await fetch(`${BASE}/sign-in`, {
+  const res = await fetch(`${BASE}/users/sign-in`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ nickname, password }),
@@ -27,7 +27,7 @@ export async function signIn(nickname: string, password: string): Promise<string
 
 export async function getMe(): Promise<{ id: number; emailAddress: string; nickname: string }> {
   const token = localStorage.getItem('token')
-  const res = await fetch(`${BASE}/me`, {
+  const res = await fetch(`${BASE}/users/me`, {
     headers: { Authorization: `Bearer ${token}` },
   })
   if (!res.ok) throw new Error('Unauthorized')
