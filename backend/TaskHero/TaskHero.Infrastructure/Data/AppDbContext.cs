@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TaskHero.Domain.Images;
+using TaskHero.Domain.Requests;
 using TaskHero.Domain.Users;
 
 namespace TaskHero.Infrastructure.Data;
@@ -8,6 +9,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 {
     public DbSet<User> Users { get; private set; } = null!;
     public DbSet<Image> Images { get; private set; } = null!;
+    public DbSet<Request> Requests { get; private set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

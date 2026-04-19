@@ -1,7 +1,9 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using TaskHero.Api.Features.Images;
+using TaskHero.Api.Features.Requests;
 using TaskHero.Api.Features.Users;
 using TaskHero.Infrastructure;
 using TaskHero.Infrastructure.Data;
@@ -11,6 +13,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddValidation();
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.NumberHandling = JsonNumberHandling.Strict;
+});
 builder.Services.AddOpenApi(options =>
 {
     options.AddDocumentTransformer((document, _, _) =>
@@ -46,6 +52,7 @@ app.UseHttpsRedirection();
 
 app.MapUserEndpoints();
 app.MapImageEndpoints();
+app.MapRequestEndpoints();
 
 using (var scope = app.Services.CreateScope())
 {

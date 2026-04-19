@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TaskHero.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using TaskHero.Infrastructure.Data;
 namespace TaskHero.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260419092100_RenameReportToRequest")]
+    partial class RenameReportToRequest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,9 +72,6 @@ namespace TaskHero.Infrastructure.Migrations
                     b.Property<int>("NumberOfVolunteers")
                         .HasColumnType("int");
 
-                    b.Property<int>("RequestedById")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -81,8 +81,6 @@ namespace TaskHero.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("RequestedById");
 
                     b.ToTable("Requests", (string)null);
                 });
@@ -129,12 +127,6 @@ namespace TaskHero.Infrastructure.Migrations
 
             modelBuilder.Entity("TaskHero.Domain.Requests.Request", b =>
                 {
-                    b.HasOne("TaskHero.Domain.Users.User", "RequestedBy")
-                        .WithMany()
-                        .HasForeignKey("RequestedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.OwnsOne("TaskHero.Domain.Requests.LatLong", "Location", b1 =>
                         {
                             b1.Property<int>("RequestId")
@@ -181,8 +173,6 @@ namespace TaskHero.Infrastructure.Migrations
 
                     b.Navigation("RequestDateTime")
                         .IsRequired();
-
-                    b.Navigation("RequestedBy");
                 });
 
             modelBuilder.Entity("TaskHero.Domain.Users.User", b =>
