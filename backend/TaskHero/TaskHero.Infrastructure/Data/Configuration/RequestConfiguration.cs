@@ -31,7 +31,7 @@ public class RequestConfiguration : IEntityTypeConfiguration<Request>
         builder.HasMany(x => x.Images)
             .WithOne();
 
-        builder.OwnsOne(x => x.Location);
+        builder.OwnsOne(x => x.Location, l => l.OwnsOne(x => x.LatLong));
 
         builder.Navigation(x => x.Images)
             .HasField("_images");

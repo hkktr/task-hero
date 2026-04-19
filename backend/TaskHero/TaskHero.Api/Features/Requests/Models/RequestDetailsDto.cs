@@ -10,6 +10,8 @@ public record RequestDetailsDto(
     string Description,
     RequestDateTimeDto RequestDateTime,
     int NumberOfVolunteers,
-    IReadOnlyList<string> Images, 
+    IReadOnlyList<string> Images,
     UserSummaryDto RequestedBy,
-    LocationDto Location);
+    RequestLocationDto Location);
+
+public record RequestLocationDto(string? FullAddress, LatLongDto LatLong);

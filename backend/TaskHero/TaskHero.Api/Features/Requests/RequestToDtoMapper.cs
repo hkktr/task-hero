@@ -17,5 +17,6 @@ public static class RequestToDtoMapper
             NumberOfVolunteers: request.NumberOfVolunteers,
             Images: request.Images.Select(i => i.Uri.ToString()).ToArray(),
             RequestedBy: new UserSummaryDto(request.RequestedBy.Id, request.RequestedBy.Nickname),
-            Location: new LocationDto(request.Location.Latitude, request.Location.Longitude));
+            Location: new RequestLocationDto(request.Location.FullAddress,
+                new LatLongDto(request.Location.LatLong.Latitude, request.Location.LatLong.Longitude)));
 }

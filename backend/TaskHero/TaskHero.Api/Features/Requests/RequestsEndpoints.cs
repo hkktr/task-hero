@@ -7,6 +7,7 @@ using TaskHero.Api.Features.Common.Models;
 using TaskHero.Api.Features.Requests.Models;
 using TaskHero.Domain.Requests;
 using TaskHero.Infrastructure.Data;
+using TaskHero.Infrastructure.Mapbox;
 
 namespace TaskHero.Api.Features.Requests;
 
@@ -18,6 +19,7 @@ public static class RequestsEndpoints
                 ClaimsPrincipal principal,
                 [FromBody] CreateReportRequest requestModel,
                 AppDbContext dbContext,
+                IMapboxApiClient mapboxApiClient,
                 CancellationToken cancellationToken) =>
             {
                 if (!principal.TryGetUserId(out var userId))
@@ -36,6 +38,11 @@ public static class RequestsEndpoints
                     return Results.BadRequest(new ErrorModel("Some of the requested images could not be retrieved."));
                 }
 
+                var reverseGeocodingResponse = await mapboxApiClient.ReverseGeocodeAsync(requestModel.Location.Latitude,
+                    requestModel.Location.Longitude, cancellationToken);
+
+                var feature = reverseGeocodingResponse.Features.FirstOrDefault();
+
                 var request = new Request(
                     requestModel.Title,
                     requestModel.Type,
@@ -44,7 +51,8 @@ public static class RequestsEndpoints
                         requestModel.DateTimeSlot.To),
                     requestModel.NumberOfVolunteers,
                     images,
-                    new LatLong(requestModel.Location.Latitude, requestModel.Location.Longitude),
+                    new RequestLocation(feature?.Properties.Name, feature?.Properties.FullAddress,
+                        new LatLong(requestModel.Location.Latitude, requestModel.Location.Longitude)),
                     user);
 
                 await dbContext.Requests.AddAsync(request, cancellationToken);

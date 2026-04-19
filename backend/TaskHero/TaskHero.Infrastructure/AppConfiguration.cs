@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using TaskHero.Infrastructure.Data;
 using TaskHero.Infrastructure.Hashing;
 using TaskHero.Infrastructure.Jwt;
+using TaskHero.Infrastructure.Mapbox;
 using TaskHero.Infrastructure.Storage;
 
 namespace TaskHero.Infrastructure;
@@ -18,6 +19,16 @@ public static class AppConfiguration
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration,
         bool isDevelopment)
     {
+        var mapboxOptions = configuration.GetSection("Mapbox").Get<MapboxOptions>() ??
+                            throw new InvalidOperationException("Missing Mapbox configuration.");
+        
+        services.AddSingleton(mapboxOptions);
+
+        services.AddHttpClient(nameof(MapboxApiClient),
+            httpClient => { httpClient.BaseAddress = new Uri(mapboxOptions.BaseUrl); });
+        
+        services.AddSingleton<IMapboxApiClient, MapboxApiClient>();
+
         var passwordHashingOptions = configuration.GetSection("PasswordHashingOptions").Get<PasswordHashingOptions>() ??
                                      new PasswordHashingOptions();
 
@@ -35,7 +46,7 @@ public static class AppConfiguration
                 options.UseAzureSql(configuration["AZURE_SQL_CONNECTIONSTRING"]);
             }
         });
-        
+
         Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
         var jwtOptions = configuration.GetRequiredSection("JwtOptions").Get<JwtOptions>()!;
@@ -56,14 +67,14 @@ public static class AppConfiguration
         services.AddSingleton(storageOptions);
         services.AddSingleton(imageUploadOptions);
         services.AddSingleton<IImageUploader, ImageUploader>();
-        
+
         services.AddAzureClients(clientBuilder =>
         {
             clientBuilder.AddBlobServiceClient(storageOptions.AzureStorageUri ?? throw new InvalidOperationException());
             clientBuilder.UseCredential(new DefaultAzureCredential());
         });
     }
-    
+
     private static void ApplyDefaultJwtOptions(JwtBearerOptions bearerOptions, JwtOptions jwtValidationOptions)
     {
         bearerOptions.TokenValidationParameters = new TokenValidationParameters

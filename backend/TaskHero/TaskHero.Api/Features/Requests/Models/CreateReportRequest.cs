@@ -10,4 +10,4 @@ public record CreateReportRequest(
     [Required] RequestDateTimeDto DateTimeSlot,
     [Range(1, 20)] int NumberOfVolunteers,
     [Length(1, 10)] IReadOnlyList<Guid> ImageIds,
-    [Required] LocationDto Location);
+    [Required] LatLongDto Location);

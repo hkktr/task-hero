@@ -12,7 +12,7 @@ public class Request
     public RequestDateTime RequestDateTime { get; }
     public int NumberOfVolunteers { get; }
     public IReadOnlyList<Image> Images => _images.AsReadOnly();
-    public LatLong Location { get; }
+    public RequestLocation Location { get; }
     public User RequestedBy { get; }
 
     private readonly List<Image> _images = new();
@@ -24,7 +24,7 @@ public class Request
         RequestDateTime requestDateTime,
         int numberOfVolunteers,
         IReadOnlyList<Image> images,
-        LatLong location,
+        RequestLocation location,
         User requestedBy)
     {
         Title = title;
