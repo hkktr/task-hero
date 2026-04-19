@@ -85,5 +85,20 @@ public static class RequestsEndpoints
             .Produces<RequestDetailsDto>()
             .Produces((int)HttpStatusCode.NotFound)
             .RequireAuthorization();
+
+        app.MapGet("requests", async (
+                AppDbContext dbContext,
+                CancellationToken cancellationToken
+            ) =>
+            {
+                var requests = await dbContext.Requests
+                    .Include(x => x.Images)
+                    .Take(100) // TODO: Pagination
+                    .OrderByDescending(x => x.Id)
+                    .ToArrayAsync(cancellationToken);
+
+                return Results.Ok(requests.Select(RequestToDtoMapper.MapSummary));
+            })
+            .Produces<IEnumerable<RequestSummaryDto>>();
     }
 }

@@ -19,4 +19,12 @@ public static class RequestToDtoMapper
             RequestedBy: new UserSummaryDto(request.RequestedBy.Id, request.RequestedBy.Nickname),
             Location: new RequestLocationDto(request.Location.FullAddress,
                 new LatLongDto(request.Location.LatLong.Latitude, request.Location.LatLong.Longitude)));
+
+    public static RequestSummaryDto MapSummary(Request request)
+        => new(
+            Id: request.Id,
+            Title: request.Title,
+            Images: request.Images.Select(i => i.Uri.ToString()).ToArray(),
+            Location: new RequestLocationDto(request.Location.FullAddress,
+                new LatLongDto(request.Location.LatLong.Latitude, request.Location.LatLong.Longitude)));
 }
