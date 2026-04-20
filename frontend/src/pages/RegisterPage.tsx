@@ -47,29 +47,45 @@ export default function RegisterPage() {
             <input
               type="text"
               placeholder={t('register.nickname')}
+              autoComplete="username"
               value={nickname}
-              onChange={e => { setNickname(e.target.value); setErrors({ empty: false, mismatch: false, server: '' }) }}
+              onChange={(e) => {
+                setNickname(e.target.value)
+                setErrors({ empty: false, mismatch: false, server: '' })
+              }}
               className={`w-full bg-white rounded-lg px-4 py-2.5 text-xs text-black outline-none ${errors.empty && !nickname.trim() ? 'ring-2 ring-red-400' : ''}`}
             />
             <input
               type="email"
               placeholder={t('register.email')}
+              autoComplete="email"
               value={email}
-              onChange={e => { setEmail(e.target.value); setErrors({ empty: false, mismatch: false, server: '' }) }}
+              onChange={(e) => {
+                setEmail(e.target.value)
+                setErrors({ empty: false, mismatch: false, server: '' })
+              }}
               className={`w-full bg-white rounded-lg px-4 py-2.5 text-xs text-black outline-none ${errors.empty && !email.trim() ? 'ring-2 ring-red-400' : ''}`}
             />
             <input
               type="password"
               placeholder={t('register.password')}
+              autoComplete="new-password"
               value={password}
-              onChange={e => { setPassword(e.target.value); setErrors({ empty: false, mismatch: false, server: '' }) }}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                setErrors({ empty: false, mismatch: false, server: '' })
+              }}
               className={`w-full bg-white rounded-lg px-4 py-2.5 text-xs text-black outline-none ${(errors.empty && !password.trim()) || errors.mismatch ? 'ring-2 ring-red-400' : ''}`}
             />
             <input
               type="password"
               placeholder={t('register.password')}
+              autoComplete="new-password"
               value={confirm}
-              onChange={e => { setConfirm(e.target.value); setErrors({ empty: false, mismatch: false, server: '' }) }}
+              onChange={(e) => {
+                setConfirm(e.target.value)
+                setErrors({ empty: false, mismatch: false, server: '' })
+              }}
               className={`w-full bg-white rounded-lg px-4 py-2.5 text-xs text-black outline-none ${(errors.empty && !confirm.trim()) || errors.mismatch ? 'ring-2 ring-red-400' : ''}`}
             />
             {errors.empty && <p className="text-xs text-red-500">{t('form.required')}</p>}

@@ -44,20 +44,26 @@ export default function LoginPage() {
             <input
               type="text"
               placeholder={t('login.login')}
+              autoComplete="username"
               value={login}
-              onChange={e => { setLogin(e.target.value); setError(null) }}
+              onChange={(e) => {
+                setLogin(e.target.value)
+                setError(null)
+              }}
               className={`w-full bg-white rounded-lg px-4 py-2.5 text-xs text-black outline-none ${error && !login.trim() ? 'ring-2 ring-red-400' : ''}`}
             />
             <input
               type="password"
               placeholder={t('login.password')}
+              autoComplete="current-password"
               value={password}
-              onChange={e => { setPassword(e.target.value); setError(null) }}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                setError(null)
+              }}
               className={`w-full bg-white rounded-lg px-4 py-2.5 text-xs text-black outline-none ${error && !password.trim() ? 'ring-2 ring-red-400' : ''}`}
             />
-            {error && (
-              <p className="text-xs text-red-500">{error}</p>
-            )}
+            {error && <p className="text-xs text-red-500">{error}</p>}
           </div>
 
           <button
