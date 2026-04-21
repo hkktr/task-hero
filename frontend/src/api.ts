@@ -1,4 +1,4 @@
-import { getToken } from './context/AuthContext'
+import { TOKEN_STORAGE_KEY } from './context/AuthContext'
 
 const BASE = 'https://task-hero-api.azurewebsites.net'
 
@@ -28,8 +28,9 @@ export const signIn = async (nickname: string, password: string): Promise<string
 }
 
 export const getMe = async (): Promise<{ id: number; emailAddress: string; nickname: string }> => {
+  const token = localStorage.getItem(TOKEN_STORAGE_KEY)
   const res = await fetch(`${BASE}/users/me`, {
-    headers: { Authorization: `Bearer ${getToken()}` },
+    headers: { Authorization: `Bearer ${token}` },
   })
   if (!res.ok) throw new Error('Unauthorized')
   return res.json()

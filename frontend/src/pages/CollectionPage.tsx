@@ -15,7 +15,7 @@ const MOCK_ITEMS = [
 export default function CollectionPage() {
   const { t } = useLanguage()
   const [activeFilter, setActiveFilter] = useState(0)
-  const CATEGORY_KEYS = ['cat.allInterests', 'cat.animals', 'cat.elderlyCare', 'cat.ecology', 'cat.emergency']
+  const CATEGORY_KEYS = ['cat.allInterests', 'cat.animals', 'cat.elderlyCare', 'cat.ecology', 'cat.emergency'] as const
   return (
     <div className="min-h-screen bg-[#f9f9f9] flex flex-col">
       <Header />

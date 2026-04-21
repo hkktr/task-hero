@@ -9,7 +9,7 @@ const CATEGORY_KEYS = [
   'cat.petCare',
   'cat.grocery',
   'cat.handyman',
-]
+] as const
 
 export default function PostStep1Page() {
   const navigate = useNavigate()

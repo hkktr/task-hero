@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, type ReactNode, useMemo } from 'react'
 import { jwtDecode } from 'jwt-decode'
 
 export interface JwtUser {
@@ -28,35 +28,34 @@ const AuthContext = createContext<AuthCtx>({
   logout: () => {},
 })
 
-const TOKEN_STORAGE_KEY = 'token'
+export const TOKEN_STORAGE_KEY = 'token'
 
-export const getToken = () => localStorage.getItem(TOKEN_STORAGE_KEY)
+const getInitialToken = (): string | null => {
+  const token = localStorage.getItem(TOKEN_STORAGE_KEY)
+  if (!token) return null
+
+  try {
+    const decoded = jwtDecode<JwtUser>(token)
+    if (decoded.exp * 1000 < Date.now()) {
+      localStorage.removeItem(TOKEN_STORAGE_KEY)
+      return null
+    }
+    return token
+  } catch {
+    localStorage.removeItem(TOKEN_STORAGE_KEY)
+    return null
+  }
+}
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setToken] = useState<string | null>(() => getToken())
-  const [user, setUser] = useState<JwtUser | null>(null)
-
-  useEffect(() => {
-    if (!token) {
-      setUser(null)
-      return
-    }
-
-    let user: JwtUser
+  const [token, setToken] = useState<string | null>(() => getInitialToken())
+  const user = useMemo(() => {
+    if (!token) return null
     try {
-      user = jwtDecode<JwtUser>(token)
-    } catch (error) {
-      console.error('Invalid token:', error)
-      logout()
-      return
+      return jwtDecode<JwtUser>(token)
+    } catch {
+      return null
     }
-
-    if (user.exp * 1000 < Date.now()) {
-      logout()
-      return
-    }
-
-    setUser(user)
   }, [token])
 
   const login = (token: string) => {
@@ -69,6 +68,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem(TOKEN_STORAGE_KEY)
   }
 
+  useEffect(() => {
+    if (!token || !user) return
+
+    const timeUntilExpiry = user.exp * 1000 - Date.now()
+    const timer = setTimeout(() => logout(), Math.max(0, timeUntilExpiry))
+
+    return () => clearTimeout(timer)
+  }, [token, user])
+
   return (
     <AuthContext.Provider value={{ token, user, isAuthenticated: !!token, login, logout }}>
       {children}
@@ -76,4 +84,5 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext)

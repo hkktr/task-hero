@@ -223,7 +223,7 @@ const LanguageContext = createContext<LangCtx>({
 
 const LANG_STORAGE_KEY = 'lang'
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
+export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [lang, setLang] = useState<Lang>(() => {
     const savedLang = localStorage.getItem(LANG_STORAGE_KEY) as Lang | null
     return savedLang === 'en' ? 'en' : 'pl'
@@ -242,4 +242,5 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   return <LanguageContext.Provider value={{ lang, toggle, t }}>{children}</LanguageContext.Provider>
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useLanguage = () => useContext(LanguageContext)
