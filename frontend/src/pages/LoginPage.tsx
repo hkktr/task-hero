@@ -2,26 +2,31 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import Header from '../components/Header'
 import { useLanguage } from '../context/LanguageContext'
-import { signIn, saveToken } from '../api'
+import { signIn } from '../api'
+import { useAuth } from '../context/AuthContext'
 
 export default function LoginPage() {
   const navigate = useNavigate()
   const { t } = useLanguage()
+  const { login: authLogin } = useAuth()
+
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  async function handleLogin() {
+  const handleLogin = async () => {
     if (!login.trim() || !password.trim()) {
       setError(t('form.required'))
       return
     }
+
     setLoading(true)
     setError(null)
+
     try {
       const token = await signIn(login.trim(), password)
-      saveToken(token)
+      authLogin(token)
       navigate('/map')
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Login failed')

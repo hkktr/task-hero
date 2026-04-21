@@ -1,6 +1,8 @@
+import { getToken } from './context/AuthContext'
+
 const BASE = 'https://task-hero-api.azurewebsites.net'
 
-export async function register(nickname: string, emailAddress: string, password: string) {
+export const register = async (nickname: string, emailAddress: string, password: string) => {
   const res = await fetch(`${BASE}/users/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -12,7 +14,7 @@ export async function register(nickname: string, emailAddress: string, password:
   }
 }
 
-export async function signIn(nickname: string, password: string): Promise<string> {
+export const signIn = async (nickname: string, password: string): Promise<string> => {
   const res = await fetch(`${BASE}/users/sign-in`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -25,23 +27,10 @@ export async function signIn(nickname: string, password: string): Promise<string
   return data.token as string
 }
 
-export async function getMe(): Promise<{ id: number; emailAddress: string; nickname: string }> {
-  const token = localStorage.getItem('token')
+export const getMe = async (): Promise<{ id: number; emailAddress: string; nickname: string }> => {
   const res = await fetch(`${BASE}/users/me`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${getToken()}` },
   })
   if (!res.ok) throw new Error('Unauthorized')
   return res.json()
-}
-
-export function saveToken(token: string) {
-  localStorage.setItem('token', token)
-}
-
-export function clearToken() {
-  localStorage.removeItem('token')
-}
-
-export function getToken() {
-  return localStorage.getItem('token')
 }

@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react'
 import Header from '../components/Header'
 import { useLanguage } from '../context/LanguageContext'
-import { getMe } from '../api'
+import { useAuth } from '../context/AuthContext'
 
 const MOCK_UPCOMING = [
   { id: 1, date: 'OCT 24', title: 'Riverside Park Clean-up & Tree Planting', desc: 'Meeting at the North Gate entrance at 9:00 AM.' },
@@ -10,15 +10,20 @@ const MOCK_UPCOMING = [
 
 export default function AccountPage() {
   const { t } = useLanguage()
+  const { user } = useAuth()
 
   // Profile state
   const [avatar, setAvatar] = useState<string | null>(null)
-  const [name, setName] = useState('')
+  const [name, setName] = useState(user?.name ?? '')
   const [role, setRole] = useState('Community Guardian')
 
   useEffect(() => {
-    getMe().then(user => setName(user.nickname)).catch(() => {})
-  }, [])
+    if (!user) return
+
+    setName(user.name)
+    setDraftName(user.name)
+  }, [user])
+
   const [editing, setEditing] = useState(false)
   const [draftName, setDraftName] = useState(name)
   const [draftRole, setDraftRole] = useState(role)

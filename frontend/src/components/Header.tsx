@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
+import { useAuth } from '../context/AuthContext'
 
 interface HeaderProps {
   showCancel?: boolean
@@ -8,6 +9,7 @@ interface HeaderProps {
 
 export default function Header({ showCancel = false, showExplore = false }: HeaderProps) {
   const { lang, toggle, t } = useLanguage()
+  const { isAuthenticated } = useAuth()
   const navigate = useNavigate()
 
   return (
@@ -43,7 +45,7 @@ export default function Header({ showCancel = false, showExplore = false }: Head
 
         {showCancel ? (
           <button
-            onClick={() => navigate('/map')}
+            onClick={() => navigate(isAuthenticated ? '/map' : '/')}
             className="flex items-center gap-2 text-[#5b6061] text-xs font-medium tracking-[0.6px] uppercase cursor-pointer hover:text-[#2f3334] transition-colors"
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
