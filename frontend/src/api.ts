@@ -1,4 +1,7 @@
 import { TOKEN_STORAGE_KEY } from './context/AuthContext'
+import type { Coordinates } from './interfaces/coordinates'
+import type { Image } from './interfaces/image'
+import type { RequestFormPayload } from './interfaces/request-form'
 
 const BASE = 'https://task-hero-api.azurewebsites.net'
 
@@ -34,4 +37,48 @@ export const getMe = async (): Promise<{ id: number; emailAddress: string; nickn
   })
   if (!res.ok) throw new Error('Unauthorized')
   return res.json()
+}
+
+export const uploadImage = async (file: File): Promise<Image> => {
+  const token = localStorage.getItem(TOKEN_STORAGE_KEY)
+  const formData = new FormData()
+  formData.append('file', file)
+
+  const res = await fetch(`${BASE}/images/upload`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  })
+  if (!res.ok) throw new Error('Image upload failed')
+
+  return res.json()
+}
+
+export const createRequest = async (form: RequestFormPayload): Promise<Request> => {
+  const token = localStorage.getItem(TOKEN_STORAGE_KEY)
+
+  const res = await fetch(`${BASE}/requests/create`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify(form),
+  })
+  if (!res.ok) throw new Error('Request creation failed')
+
+  return res.json()
+}
+
+export const geocodeAddress = async (query: string): Promise<Coordinates | null> => {
+  const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
+
+  const res = await fetch(
+    `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${MAPBOX_TOKEN}&limit=1`,
+  )
+  if (!res.ok) throw new Error('Geocoding failed')
+
+  const data = await res.json()
+  const feature = data.features?.at(0)
+  if (!feature) return null
+
+  const [longitude, latitude] = feature.center
+  return { latitude, longitude }
 }

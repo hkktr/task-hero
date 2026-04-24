@@ -1,16 +1,88 @@
-import { useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
 import Header from '../components/Header'
 import { useLanguage } from '../context/LanguageContext'
+import type { Coordinates } from '../interfaces/coordinates'
+import type { RequestFormStep3 } from '../interfaces/request-form'
+import { createRequest, geocodeAddress } from '../api'
+import Map, { Marker } from 'react-map-gl/mapbox'
+import 'mapbox-gl/dist/mapbox-gl.css'
 
 export default function PostStep4Page() {
+  const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN
+
+  const { t } = useLanguage()
+  const location = useLocation()
   const navigate = useNavigate()
-  const { lang, t } = useLanguage()
+
+  const form: RequestFormStep3 | undefined = location.state?.form
+
   const [progress, setProgress] = useState(() => parseInt(sessionStorage.getItem('postProgress') ?? '0'))
+
+  const [street, setStreet] = useState('')
+  const [city, setCity] = useState('')
+  const [zipCode, setZipCode] = useState('')
+
+  const [coordinates, setCoordinates] = useState<Coordinates | null>(null)
+  const [isGeocoding, setIsGeocoding] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const isSubmitDisabled = useMemo(() => !coordinates || isGeocoding || isSubmitting, [coordinates, isGeocoding, isSubmitting])
+
   useEffect(() => {
     const id = setTimeout(() => { setProgress(100); sessionStorage.setItem('postProgress', '100') }, 50)
     return () => clearTimeout(id)
   }, [])
+
+  useEffect(() => {
+    setCoordinates(null)
+
+    if (!street.trim() || !city.trim() || !zipCode.trim()) {
+      setIsGeocoding(false)
+      return
+    }
+
+    setIsGeocoding(true)
+    const query = `${street}, ${zipCode} ${city}`
+
+    const debounceId = setTimeout(async () => {
+      try {
+        const result = await geocodeAddress(query)
+        if (result) setCoordinates(result)
+      } catch (error) {
+        console.error('Błąd geokodowania:', error)
+      } finally {
+        setIsGeocoding(false)
+      }
+    }, 500)
+
+    return () => clearTimeout(debounceId)
+  }, [street, city, zipCode])
+
+  if (!form?.imageIds) {
+    return <Navigate to="/post/1" replace />
+  }
+
+  const handleSubmit = async () => {
+    if (!coordinates || isGeocoding || isSubmitting) return
+
+    setIsSubmitting(true)
+
+    try {
+      const { images: _images, ...payload} = form
+      await createRequest({
+        ...payload,
+        location: coordinates,
+      })
+
+      sessionStorage.removeItem('postProgress')
+      navigate('/map')
+    } catch (error) {
+      console.error(error)
+      alert('Nie udało się utworzyć ogłoszenia. Spróbuj ponownie')
+    } finally {
+      setIsSubmitting(false)
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#f9f9f9]" style={{ fontFamily: 'Inter, sans-serif' }}>
@@ -45,8 +117,8 @@ export default function PostStep4Page() {
                 <label className="text-xs font-semibold text-[#5b6061] tracking-wide uppercase">{t('post.step4.street')}</label>
                 <input
                   type="text"
-                  key={`street-${lang}`}
-                  defaultValue={lang === 'en' ? '123 Example Street' : 'ul. Przykładowa 12'}
+                  value={street}
+                  onChange={e => setStreet(e.target.value)}
                   className="w-full bg-white rounded-[12px] px-5 py-3.5 text-base text-[#2f3334] outline-none shadow-sm"
                 />
               </div>
@@ -55,8 +127,8 @@ export default function PostStep4Page() {
                   <label className="text-xs font-semibold text-[#5b6061] tracking-wide uppercase">{t('post.step4.city')}</label>
                   <input
                     type="text"
-                    key={`city-${lang}`}
-                    defaultValue={lang === 'en' ? 'Warsaw' : 'Warszawa'}
+                    value={city}
+                    onChange={e => setCity(e.target.value)}
                     className="w-full bg-white rounded-[12px] px-5 py-3.5 text-base text-[#2f3334] outline-none shadow-sm"
                   />
                 </div>
@@ -64,7 +136,8 @@ export default function PostStep4Page() {
                   <label className="text-xs font-semibold text-[#5b6061] tracking-wide uppercase">{t('post.step4.postal')}</label>
                   <input
                     type="text"
-                    defaultValue="00-001"
+                    value={zipCode}
+                    onChange={e => setZipCode(e.target.value)}
                     className="w-full bg-white rounded-[12px] px-5 py-3.5 text-base text-[#2f3334] outline-none shadow-sm"
                   />
                 </div>
@@ -72,16 +145,34 @@ export default function PostStep4Page() {
             </div>
           </div>
 
-          {/* Map */}
-          <div className="flex-1 h-80 rounded-[24px] overflow-hidden bg-[#e6e9e9] flex items-center justify-center">
-            <p className="text-sm text-[#5b6061]">Map placeholder</p>
+          {/* Map Preview */}
+          <div className="flex-1 h-80 rounded-[24px] overflow-hidden bg-[#e6e9e9] flex flex-col items-center justify-center relative">
+            {isGeocoding ? (
+              <p className="text-sm font-semibold text-[#5b6061] z-10 relative">{t('post.step4.geocoding')}</p>
+            ) : coordinates ? (
+              <Map
+                mapboxAccessToken={mapboxToken}
+                key={`${coordinates.latitude}-${coordinates.longitude}`}
+                initialViewState={{
+                  longitude: coordinates.longitude,
+                  latitude: coordinates.latitude,
+                  zoom: 14
+                }}
+                style={{ width: '100%', height: '100%' }}
+                mapStyle="mapbox://styles/mapbox/light-v11"
+              >
+                <Marker longitude={coordinates.longitude} latitude={coordinates.latitude} color="#1c6d25" />
+              </Map>
+            ) : (
+              <p className="text-sm font-semibold text-[#5b6061] z-10 relative text-center px-4">{t('post.step4.enterAddress')}</p>
+            )}
           </div>
         </div>
 
         {/* Buttons */}
         <div className="flex items-center gap-4">
           <button
-            onClick={() => navigate('/post/3', { state: { back: true } })}
+            onClick={() => navigate('/post/3', { state: { form, back: true } })}
             className="flex items-center gap-2 px-6 py-4 rounded-[12px] text-base font-semibold text-[#5b6061] bg-[#f2f4f4] hover:bg-[#dfe3e4] transition-colors"
             style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
           >
@@ -91,14 +182,19 @@ export default function PostStep4Page() {
             {t('post.back')}
           </button>
           <button
-            onClick={() => navigate('/map')}
-            className="flex items-center gap-3 px-10 py-4 rounded-[12px] text-base font-bold text-[#eaffe2] shadow-md"
+            onClick={handleSubmit}
+            disabled={isSubmitDisabled}
+            className={`flex items-center gap-3 px-10 py-4 rounded-[12px] text-base font-bold text-[#eaffe2] shadow-md transition-opacity ${
+              isSubmitDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90'
+            }`}
             style={{ background: 'linear-gradient(135deg, #1c6d25 0%, #096119 100%)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
           >
-            {t('post.step4.btn')}
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
+            {t(isSubmitting ? 'post.step4.submitting' : 'post.step4.btn')}
+            {!isSubmitting && (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            )}
           </button>
         </div>
       </div>

@@ -1,17 +1,60 @@
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import Header from '../components/Header'
 import { useLanguage } from '../context/LanguageContext'
+import type { RequestFormStep2 } from '../interfaces/request-form'
 
 export default function PostStep2Page() {
-  const navigate = useNavigate()
-  const [volunteers, setVolunteers] = useState(3)
   const { t } = useLanguage()
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  const form: RequestFormStep2 | undefined = location.state?.form
+
   const [progress, setProgress] = useState(() => parseInt(sessionStorage.getItem('postProgress') ?? '0'))
+  const [date, setDate] = useState(form?.dateTimeSlot?.date ?? '')
+  const [dateError, setDateError] = useState<null | 'required' | 'past'>(null)
+  const [timeFrom, setTimeFrom] = useState(form?.dateTimeSlot?.from ?? '')
+  const [timeTo, setTimeTo] = useState(form?.dateTimeSlot?.to ?? '')
+  const [timeError, setTimeError] = useState<null | 'required' | 'invalid'>(null)
+  const [volunteers, setVolunteers] = useState<number>(form?.numberOfVolunteers ?? 3)
+
   useEffect(() => {
     const id = setTimeout(() => { setProgress(50); sessionStorage.setItem('postProgress', '50') }, 50)
     return () => clearTimeout(id)
   }, [])
+
+  if (!form?.title) {
+    return <Navigate to="/post/1" replace />
+  }
+
+  const handleNext = () => {
+    if (!date || !timeFrom || !timeTo) {
+      setDateError(!date ? 'required' : null)
+      setTimeError(!timeFrom || !timeTo ? 'required' : null)
+      return
+    } else if (date < new Date().toISOString().split('T')[0]) {
+      setDateError('past')
+      return
+    } else if (timeFrom >= timeTo) {
+      setTimeError('invalid')
+      return
+    }
+
+    navigate('/post/3', {
+      state: {
+        form: {
+          ...form,
+          dateTimeSlot: {
+            date,
+            from: timeFrom,
+            to: timeTo,
+          },
+          numberOfVolunteers: volunteers,
+        } satisfies RequestFormStep2,
+      }
+    });
+  };
 
   return (
     <div className="min-h-screen bg-[#f9f9f9]" style={{ fontFamily: 'Inter, sans-serif' }}>
@@ -54,9 +97,16 @@ export default function PostStep2Page() {
                 <label className="text-sm font-medium text-[#5b6061]">{t('post.step2.date')}</label>
                 <input
                   type="date"
-                  defaultValue="2024-10-24"
+                  value={date}
+                  onChange={e => { setDate(e.target.value); setDateError(null) }}
                   className="w-full bg-white rounded-[12px] px-6 py-4 text-base text-[#2f3334] outline-none shadow-sm"
                 />
+                {dateError === 'required' && (
+                  <p className="text-sm text-red-500 mt-1">{t('post.step2.dateRequired')}</p>
+                )}
+                {dateError === 'past' && (
+                  <p className="text-sm text-red-500 mt-1">{t('post.step2.datePast')}</p>
+                )}
               </div>
             </div>
 
@@ -77,7 +127,8 @@ export default function PostStep2Page() {
                   <label className="text-sm font-medium text-[#5b6061]">{t('post.step2.start')}</label>
                   <input
                     type="time"
-                    defaultValue="09:00"
+                    value={timeFrom}
+                    onChange={e => { setTimeFrom(`${e.target.value}:00`); setTimeError(null) }}
                     className="w-full bg-white rounded-[12px] px-6 py-4 text-base text-[#2f3334] outline-none shadow-sm"
                   />
                 </div>
@@ -85,11 +136,18 @@ export default function PostStep2Page() {
                   <label className="text-sm font-medium text-[#5b6061]">{t('post.step2.end')}</label>
                   <input
                     type="time"
-                    defaultValue="11:30"
+                    value={timeTo}
+                    onChange={e => { setTimeTo(`${e.target.value}:00`); setTimeError(null) }}
                     className="w-full bg-white rounded-[12px] px-6 py-4 text-base text-[#2f3334] outline-none shadow-sm"
                   />
                 </div>
               </div>
+              {timeError === 'required' && (
+                <p className="text-sm text-red-500 mt-1">{t('post.step2.timeRequired')}</p>
+              )}
+              {timeError === 'invalid' && (
+                <p className="text-sm text-red-500 mt-1">{t('post.step2.timeInvalid')}</p>
+              )}
             </div>
 
             {/* Volunteers */}
@@ -126,7 +184,7 @@ export default function PostStep2Page() {
             {/* Buttons */}
             <div className="pt-4 flex items-center gap-4">
               <button
-                onClick={() => navigate('/post/1', { state: { back: true } })}
+                onClick={() => navigate('/post/1', { state: { form, back: true } })}
                 className="flex items-center gap-2 px-6 py-4 rounded-[12px] text-base font-semibold text-[#5b6061] bg-[#f2f4f4] hover:bg-[#dfe3e4] transition-colors"
                 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
               >
@@ -136,7 +194,7 @@ export default function PostStep2Page() {
                 {t('post.back')}
               </button>
               <button
-                onClick={() => navigate('/post/3')}
+                onClick={handleNext}
                 className="flex items-center gap-3 px-10 py-4 rounded-[12px] text-base font-bold text-[#eaffe2] shadow-md"
                 style={{ background: 'linear-gradient(135deg, #1c6d25 0%, #096119 100%)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
               >

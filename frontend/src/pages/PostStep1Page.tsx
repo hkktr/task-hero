@@ -2,35 +2,44 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import Header from '../components/Header'
 import { useLanguage } from '../context/LanguageContext'
-
-const CATEGORY_KEYS = [
-  'cat.moving',
-  'cat.gardening',
-  'cat.petCare',
-  'cat.grocery',
-  'cat.handyman',
-] as const
+import type { RequestFormStep1 } from '../interfaces/request-form'
+import { REQUEST_TYPES } from '../enums/request-type'
 
 export default function PostStep1Page() {
   const navigate = useNavigate()
   const location = useLocation()
   const { t } = useLanguage()
-  const [activeCategory, setActiveCategory] = useState('cat.moving')
-  const [title, setTitle] = useState('')
+
+  const form: RequestFormStep1 | undefined = location.state?.form
+
+  const [type, setType] = useState(form?.type ?? REQUEST_TYPES['MOVING'])
+  const [title, setTitle] = useState(form?.title ?? '')
   const [titleError, setTitleError] = useState(false)
+  const [description, setDescription] = useState(form?.description ?? '')
+
   const isBack = (location.state as { back?: boolean } | null)?.back
   const [progress, setProgress] = useState(() => isBack ? parseInt(sessionStorage.getItem('postProgress') ?? '0') : 0)
+
   useEffect(() => {
     const id = setTimeout(() => { setProgress(25); sessionStorage.setItem('postProgress', '25') }, 50)
     return () => clearTimeout(id)
   }, [])
 
-  function handleNext() {
+  const handleNext = () => {
     if (!title.trim()) {
       setTitleError(true)
       return
     }
-    navigate('/post/2')
+
+    navigate('/post/2', {
+      state: {
+        form: {
+          title,
+          type,
+          description,
+        } satisfies RequestFormStep1,
+      }
+    })
   }
 
   return (
@@ -91,17 +100,17 @@ export default function PostStep1Page() {
                 </p>
               </div>
               <div className="flex flex-wrap gap-3">
-                {CATEGORY_KEYS.map(key => (
+                {Object.values(REQUEST_TYPES).map((item) => (
                   <button
-                    key={key}
-                    onClick={() => setActiveCategory(key)}
+                    key={item}
+                    onClick={() => setType(item)}
                     className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-base transition-colors ${
-                      activeCategory === key
+                      type === item
                         ? 'bg-[#9df197] text-[#005c15] font-semibold'
                         : 'bg-[#dfe3e4] text-[#5b6061] font-medium hover:bg-[#cfd4d4]'
                     }`}
                   >
-                    {t(key)}
+                    {t(`cat.${item}`)}
                   </button>
                 ))}
               </div>
@@ -119,6 +128,8 @@ export default function PostStep1Page() {
               </div>
               <textarea
                 placeholder={t('post.step1.descPlaceholder')}
+                value={description}
+                onChange={e => setDescription(e.target.value)}
                 rows={5}
                 className="w-full bg-white rounded-[12px] px-6 py-6 text-base text-[#777b7c] outline-none shadow-sm resize-none"
               />

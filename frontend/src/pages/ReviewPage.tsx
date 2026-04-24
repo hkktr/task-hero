@@ -95,9 +95,9 @@ export default function ReviewPage() {
                 <option value="animals">{t('cat.animals')}</option>
                 <option value="elderly">{t('cat.elderlyCare')}</option>
                 <option value="ecology">{t('cat.ecology')}</option>
-                <option value="moving">{t('cat.moving')}</option>
-                <option value="petCare">{t('cat.petCare')}</option>
-                <option value="gardening">{t('cat.gardening')}</option>
+                <option value="moving">{t('cat.0')}</option>
+                <option value="petCare">{t('cat.1')}</option>
+                <option value="gardening">{t('cat.2')}</option>
               </select>
             </div>
 
