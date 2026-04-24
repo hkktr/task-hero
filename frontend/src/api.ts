@@ -1,6 +1,7 @@
 import { TOKEN_STORAGE_KEY } from './context/AuthContext'
 import type { Coordinates } from './interfaces/coordinates'
 import type { Image } from './interfaces/image'
+import type { SimplifiedRequest } from './interfaces/request'
 import type { RequestFormPayload } from './interfaces/request-form'
 
 const BASE = 'https://task-hero-api.azurewebsites.net'
@@ -63,6 +64,17 @@ export const createRequest = async (form: RequestFormPayload): Promise<Request> 
     body: JSON.stringify(form),
   })
   if (!res.ok) throw new Error('Request creation failed')
+
+  return res.json()
+}
+
+export const getRequests = async (): Promise<SimplifiedRequest[]> => {
+  const token = localStorage.getItem(TOKEN_STORAGE_KEY)
+
+  const res = await fetch(`${BASE}/requests`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  if (!res.ok) throw new Error('Failed to fetch requests')
 
   return res.json()
 }

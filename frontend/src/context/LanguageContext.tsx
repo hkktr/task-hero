@@ -74,9 +74,11 @@ const translations = {
   'explore.search': { en: 'Search opportunities near you...', pl: 'Szukaj ogłoszeń w pobliżu...' },
   'explore.anyDate': { en: 'Any Date', pl: 'Dowolna data' },
   'explore.allInterests': { en: 'All Interests', pl: 'Wszystkie' },
-  'explore.count': { en: '128 Local Requests', pl: '128 lokalnych ogłoszeń' },
+  'explore.count': { en: 'Local requests ', pl: 'Lokalne ogłoszenia' },
+  'explore.loading': { en: 'Loading...', pl: 'Ładowanie...' },
+  'explore.noResults': { en: 'No available requests in your area', pl: 'Brak dostępnych ogłoszeń w Twojej okolicy' },
+  'explore.checkDetails': { en: 'Check details', pl: 'Sprawdź szczegóły' },
   'explore.volunteer': { en: 'Volunteer', pl: 'Dołącz' },
-  'explore.startsTomorrow': { en: 'Starts Tomorrow', pl: 'Zaczyna się jutro' },
   // Point
   'point.signUp': { en: 'Sign Up as Volunteer', pl: 'Zapisz się jako wolontariusz' },
   'point.contact': { en: 'Contact Organizer', pl: 'Skontaktuj się z organizatorem' },

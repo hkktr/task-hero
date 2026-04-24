@@ -16,7 +16,7 @@ export default function Header({ showCancel = false, showExplore = false }: Head
     <header className="flex items-center justify-between px-8 py-6 bg-[#f9f9f9]">
       <div className="flex items-center gap-8">
         <Link
-          to="/"
+          to={isAuthenticated ? '/map' : '/'}
           className="text-[#1c6d25] text-2xl font-bold tracking-[-0.6px] leading-8"
           style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
         >

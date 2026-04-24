@@ -9,7 +9,7 @@ import Map, { Marker } from 'react-map-gl/mapbox'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
 export default function PostStep4Page() {
-  const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN
+  const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
 
   const { t } = useLanguage()
   const location = useLocation()
@@ -151,7 +151,7 @@ export default function PostStep4Page() {
               <p className="text-sm font-semibold text-[#5b6061] z-10 relative">{t('post.step4.geocoding')}</p>
             ) : coordinates ? (
               <Map
-                mapboxAccessToken={mapboxToken}
+                mapboxAccessToken={MAPBOX_TOKEN}
                 key={`${coordinates.latitude}-${coordinates.longitude}`}
                 initialViewState={{
                   longitude: coordinates.longitude,

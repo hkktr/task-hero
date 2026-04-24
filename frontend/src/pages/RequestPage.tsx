@@ -15,7 +15,7 @@ const MOCK_POINT = {
   addressSub: 'Radoszyce',
 }
 
-export default function PointPage() {
+export default function RequestPage() {
   const { id } = useParams()
   void id
   const { t } = useLanguage()

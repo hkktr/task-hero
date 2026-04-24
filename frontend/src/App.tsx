@@ -5,7 +5,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import MapPage from './pages/MapPage'
 import CollectionPage from './pages/CollectionPage'
-import PointPage from './pages/PointPage'
+import RequestPage from './pages/RequestPage'
 import ReviewPage from './pages/ReviewPage'
 import AccountPage from './pages/AccountPage'
 import AdminPage from './pages/AdminPage'
@@ -31,14 +31,14 @@ export default function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="/map" element={<MapPage />} />
               <Route path="/collection" element={<CollectionPage />} />
-              <Route path="/point/:id" element={<PointPage />} />
+              <Route path="/request/:id" element={<RequestPage />} />
               <Route path="/review" element={<ReviewPage />} />
-              <Route path="/account" element={<AccountPage />} />
-              <Route path="/admin" element={<AdminPage />} />
               <Route path="/post/1" element={<PostStep1Page />} />
               <Route path="/post/2" element={<PostStep2Page />} />
               <Route path="/post/3" element={<PostStep3Page />} />
               <Route path="/post/4" element={<PostStep4Page />} />
+              <Route path="/account" element={<AccountPage />} />
+              <Route path="/admin" element={<AdminPage />} />
             </Route>
 
             {/* Catch-all for unknown routes */}
