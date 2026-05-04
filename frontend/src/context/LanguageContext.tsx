@@ -80,6 +80,9 @@ const translations = {
   'explore.checkDetails': { en: 'Check details', pl: 'Sprawdź szczegóły' },
   'explore.volunteer': { en: 'Volunteer', pl: 'Dołącz' },
   // Point
+  'point.notFound': { en: 'Request not found', pl: 'Nie znaleziono ogłoszenia' },
+  'point.back': { en: 'Back to Explore', pl: 'Powrót do odkrywania' },
+  'point.viewAllPhotos': { en: 'View all photos', pl: 'Zobacz wszystkie zdjęcia' },
   'point.signUp': { en: 'Sign Up as Volunteer', pl: 'Zapisz się jako wolontariusz' },
   'point.contact': { en: 'Contact Organizer', pl: 'Skontaktuj się z organizatorem' },
   'point.community': { en: 'Community Joining', pl: 'Dołączający' },
