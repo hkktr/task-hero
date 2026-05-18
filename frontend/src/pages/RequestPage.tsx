@@ -6,6 +6,7 @@ import { getRequest } from '../api'
 import type { Request } from '../interfaces/request'
 import Map, { Marker, NavigationControl } from 'react-map-gl/mapbox'
 import 'mapbox-gl/dist/mapbox-gl.css'
+import ImageGalleryDialog from '../components/ImageGalleryDialog'
 
 export default function RequestPage() {
   const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
@@ -16,6 +17,7 @@ export default function RequestPage() {
 
   const [request, setRequest] = useState<Request | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false)
 
   useEffect(() => {
     if (id == null) return
@@ -75,35 +77,19 @@ export default function RequestPage() {
       <Header />
 
       {/* Photo gallery */}
-      <div className="px-8">
-        <div className="grid grid-cols-3 gap-4 h-[400px]">
-          {/* Main photo */}
-          <div
-            className={`relative rounded-[32px] overflow-hidden bg-[#dfe3e4] ${request.images.length === 1 ? 'col-span-3' : 'col-span-2'}`}
-          >
-            <img src={request.images[0]} alt="" className="w-full h-full object-cover" />
-          </div>
+      <div className="cursor-pointer px-8" onClick={() => setIsGalleryOpen(true)}>
+        <div className="relative w-full h-[400px] rounded-[32px] overflow-hidden bg-[#dfe3e4]">
+          <img
+            src={request.images[0]}
+            alt=""
+            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+          />
 
-          {/* Side photos */}
           {request.images.length > 1 && (
-            <div className="flex flex-col gap-4">
-              <div className="flex-1 relative rounded-[32px] overflow-hidden bg-[#dfe3e4]">
-                <img src={request.images[1]} alt="" className="w-full h-full object-cover" />
-              </div>
-
-              {request.images.length > 2 && (
-                <div className="flex-1 relative rounded-[32px] overflow-hidden bg-[#dfe3e4]">
-                  <img src={request.images[2]} alt="" className="w-full h-full object-cover" />
-
-                  {request.images.length > 3 && (
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer hover:bg-black/50 transition-colors">
-                      <span className="text-white text-base font-semibold">
-                        {t('point.viewAllPhotos')} ({request.images.length})
-                      </span>
-                    </div>
-                  )}
-                </div>
-              )}
+            <div className="absolute inset-0 bg-black/30 flex items-center justify-center hover:bg-black/50 transition-colors duration-300">
+              <span className="bg-black/50 backdrop-blur-md text-white text-base font-semibold px-6 py-3 rounded-full border border-white/20 shadow-lg">
+                {t('point.viewAllPhotos')} ({request.images.length})
+              </span>
             </div>
           )}
         </div>
@@ -237,6 +223,8 @@ export default function RequestPage() {
           </div>
         </div>
       </div>
+
+      <ImageGalleryDialog images={request.images} isOpen={isGalleryOpen} onClose={() => setIsGalleryOpen(false)} />
     </div>
   )
 }
