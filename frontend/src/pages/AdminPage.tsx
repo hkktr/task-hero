@@ -12,9 +12,9 @@ const PENDING = [
 
 const STATS = [
   { key: 'admin.stats.pending', value: '4', accent: true },
-  { key: 'admin.stats.today', value: '12' },
-  { key: 'admin.stats.week', value: '38' },
-  { key: 'admin.stats.avgTime', value: '2h 14m' },
+  { key: 'admin.stats.today', value: '12', accent: false },
+  { key: 'admin.stats.week', value: '38', accent: false },
+  { key: 'admin.stats.avgTime', value: '2h 14m', accent: false },
 ] as const
 
 export default function AdminPage() {
