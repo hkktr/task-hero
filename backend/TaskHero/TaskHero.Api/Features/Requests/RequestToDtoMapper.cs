@@ -24,6 +24,7 @@ public static class RequestToDtoMapper
         => new(
             Id: request.Id,
             Title: request.Title,
+            Type: request.Type,
             Images: request.Images.Select(i => i.Uri.ToString()).ToArray(),
             Location: new RequestLocationDto(request.Location.FullAddress,
                 new LatLongDto(request.Location.LatLong.Latitude, request.Location.LatLong.Longitude)));
