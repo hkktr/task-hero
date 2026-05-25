@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Azure.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -85,7 +86,9 @@ public static class AppConfiguration
             ValidateIssuer = true,
             ValidIssuer = jwtValidationOptions.Issuer,
             ValidateAudience = true,
-            ValidAudience = jwtValidationOptions.Audience
+            ValidAudience = jwtValidationOptions.Audience,
+            NameClaimType = JwtRegisteredClaimNames.Name,
+            RoleClaimType = "role"
         };
     }
 }

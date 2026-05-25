@@ -25,6 +25,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.Nickname)
             .IsRequired();
 
+        builder.Property(x => x.IsAdmin)
+            .IsRequired()
+            .HasDefaultValue(false);
+
         builder.OwnsOne(x => x.Password);
 
         builder.HasMany<Image>()

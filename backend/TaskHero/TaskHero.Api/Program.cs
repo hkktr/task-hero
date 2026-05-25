@@ -6,6 +6,7 @@ using Scalar.AspNetCore;
 using TaskHero.Api.Features.Images;
 using TaskHero.Api.Features.Requests;
 using TaskHero.Api.Features.Users;
+using TaskHero.Api.Seeders;
 using TaskHero.Infrastructure;
 using TaskHero.Infrastructure.Data;
 
@@ -40,6 +41,9 @@ builder.Services.AddOpenApi(options =>
 });
 builder.Services.AddInfrastructure(builder.Configuration, builder.Environment.IsDevelopment());
 
+builder.Services.AddSingleton(builder.Configuration.GetRequiredSection("AdminUser").Get<AdminUserOptions>()!);
+builder.Services.AddScoped<AdminUserSeeder>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -53,6 +57,9 @@ app.MapScalarApiReference(options =>
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapUserEndpoints();
 app.MapImageEndpoints();
 app.MapRequestEndpoints();
@@ -60,6 +67,7 @@ app.MapRequestEndpoints();
 using (var scope = app.Services.CreateScope())
 {
     scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.Migrate();
+    await scope.ServiceProvider.GetRequiredService<AdminUserSeeder>().SeedAsync();
 }
 
 app.Run();

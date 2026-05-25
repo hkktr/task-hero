@@ -56,12 +56,19 @@ public static class UsersEndpoints
                         new ErrorModel("User with the specified nickname and password was not found."));
                 }
 
-                var jwt = jwtIssuer.IssueToken(
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                    new Claim(JwtRegisteredClaimNames.Name, user.Nickname),
-                    new Claim(JwtRegisteredClaimNames.Email, user.EmailAddress)
-                );
+                var claims = new List<Claim>
+                {
+                    new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                    new(JwtRegisteredClaimNames.Name, user.Nickname),
+                    new(JwtRegisteredClaimNames.Email, user.EmailAddress),
+                };
 
+                if (user.IsAdmin)
+                {
+                    claims.Add(new Claim("role", "admin"));
+                }
+
+                var jwt = jwtIssuer.IssueToken(claims);
                 return Results.Ok(new SuccessfulSignInResponse(jwt));
             })
             .Produces<SuccessfulSignInResponse>()
@@ -83,7 +90,7 @@ public static class UsersEndpoints
                         new ErrorModel("User with the specified nickname and password was not found."));
                 }
 
-                return Results.Ok(new GetMeUserResponse(user.Id, user.EmailAddress, user.Nickname));
+                return Results.Ok(new GetMeUserResponse(user.Id, user.EmailAddress, user.Nickname, user.IsAdmin));
             })
             .WithName("GetMeUserEndpoint")
             .Produces<GetMeUserResponse>()
