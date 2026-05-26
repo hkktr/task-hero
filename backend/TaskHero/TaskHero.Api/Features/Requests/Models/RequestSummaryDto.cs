@@ -7,4 +7,5 @@ public record RequestSummaryDto(
     string Title,
     RequestType Type,
     RequestLocationDto Location,
-    IReadOnlyList<string> Images);
+    IReadOnlyList<string> Images,
+    ApprovalStatus ApprovalStatus);

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskHero.Api.Extensions;
@@ -65,6 +66,7 @@ public static class RequestsEndpoints
             .RequireAuthorization();
 
         app.MapGet("requests/{requestId:int}", async (
+                ClaimsPrincipal principal,
                 int requestId,
                 AppDbContext dbContext,
                 CancellationToken cancellationToken
@@ -80,6 +82,11 @@ public static class RequestsEndpoints
                     return Results.NotFound();
                 }
 
+                if (request.ApprovalStatus != ApprovalStatus.Approved && !principal.IsInRole("admin"))
+                {
+                    return Results.NotFound();
+                }
+
                 return Results.Ok(RequestToDtoMapper.Map(request));
             })
             .Produces<RequestDetailsDto>()
@@ -87,18 +94,68 @@ public static class RequestsEndpoints
             .RequireAuthorization();
 
         app.MapGet("requests", async (
+                ClaimsPrincipal principal,
+                [AsParameters] RequestsQueryModel query,
                 AppDbContext dbContext,
                 CancellationToken cancellationToken
             ) =>
             {
-                var requests = await dbContext.Requests
+                if (!principal.IsInRole("admin"))
+                {
+                    query = new RequestsQueryModel(ApprovalStatus.Approved);
+                }
+
+                IQueryable<Request> queryable = dbContext.Requests
                     .Include(x => x.Images)
                     .Take(100) // TODO: Pagination
-                    .OrderByDescending(x => x.Id)
-                    .ToArrayAsync(cancellationToken);
+                    .OrderByDescending(x => x.Id);
+
+                if (query.Status is { } approvalStatus)
+                {
+                    queryable = queryable.Where(x => x.ApprovalStatus == approvalStatus);
+                }
+
+                var requests = await queryable.ToArrayAsync(cancellationToken);
 
                 return Results.Ok(requests.Select(RequestToDtoMapper.MapSummary));
             })
-            .Produces<IEnumerable<RequestSummaryDto>>();
+            .Produces<IEnumerable<RequestSummaryDto>>()
+            .RequireAuthorization();
+
+        app.MapPut("requests/{requestId:int}/approval-status",
+            [Authorize(Roles = "admin")] async (
+                int requestId,
+                [FromBody] UpdateApprovalStatusRequestModel requestModel,
+                AppDbContext dbContext,
+                CancellationToken cancellationToken
+                ) =>
+            {
+                var request = await dbContext.Requests
+                    .Include(r => r.Images)
+                    .Include(r => r.RequestedBy)
+                    .SingleOrDefaultAsync(r => r.Id == requestId, cancellationToken);
+
+                if (request is null)
+                {
+                    return Results.NotFound();
+                }
+
+                if (requestModel.ApprovalStatus == ApprovalStatus.Approved)
+                {
+                    request.Approve();
+                }
+                else if (requestModel.ApprovalStatus == ApprovalStatus.Rejected)
+                {
+                    request.Reject();
+                }
+                else
+                {
+                    return Results.BadRequest(new ErrorModel("Operation not permitted."));
+                }
+
+                await dbContext.SaveChangesAsync(cancellationToken);
+
+                return Results.Ok();
+            });
     }
 }

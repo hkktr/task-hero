@@ -31,6 +31,10 @@ public class RequestConfiguration : IEntityTypeConfiguration<Request>
         builder.HasMany(x => x.Images)
             .WithOne();
 
+        builder.Property(x => x.ApprovalStatus)
+            .IsRequired()
+            .HasDefaultValue(ApprovalStatus.Pending);
+
         builder.OwnsOne(x => x.Location, l => l.OwnsOne(x => x.LatLong));
 
         builder.Navigation(x => x.Images)

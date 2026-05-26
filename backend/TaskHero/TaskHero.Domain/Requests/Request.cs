@@ -14,6 +14,7 @@ public class Request
     public IReadOnlyList<Image> Images => _images.AsReadOnly();
     public RequestLocation Location { get; }
     public User RequestedBy { get; }
+    public ApprovalStatus ApprovalStatus { get; private set; } = ApprovalStatus.Pending;
 
     private readonly List<Image> _images = new();
     
@@ -40,5 +41,25 @@ public class Request
     // EF Core constructor
     private Request()
     {
+    }
+
+    public void Approve()
+    {
+        if (ApprovalStatus != ApprovalStatus.Pending)
+        {
+            throw new InvalidOperationException("Cannot approve a record that isn't pending approval.");
+        }
+
+        ApprovalStatus = ApprovalStatus.Approved;
+    }
+
+    public void Reject()
+    {
+        if (ApprovalStatus != ApprovalStatus.Pending)
+        {
+            throw new InvalidOperationException("Cannot reject a record that isn't pending approval.");
+        }
+
+        ApprovalStatus = ApprovalStatus.Rejected;
     }
 }

@@ -12,6 +12,7 @@ public record RequestDetailsDto(
     int NumberOfVolunteers,
     IReadOnlyList<string> Images,
     UserSummaryDto RequestedBy,
-    RequestLocationDto Location);
+    RequestLocationDto Location,
+    ApprovalStatus ApprovalStatus);
 
 public record RequestLocationDto(string? FullAddress, LatLongDto LatLong);

@@ -18,7 +18,8 @@ public static class RequestToDtoMapper
             Images: request.Images.Select(i => i.Uri.ToString()).ToArray(),
             RequestedBy: new UserSummaryDto(request.RequestedBy.Id, request.RequestedBy.Nickname),
             Location: new RequestLocationDto(request.Location.FullAddress,
-                new LatLongDto(request.Location.LatLong.Latitude, request.Location.LatLong.Longitude)));
+                new LatLongDto(request.Location.LatLong.Latitude, request.Location.LatLong.Longitude)),
+            ApprovalStatus: request.ApprovalStatus);
 
     public static RequestSummaryDto MapSummary(Request request)
         => new(
@@ -27,5 +28,6 @@ public static class RequestToDtoMapper
             Type: request.Type,
             Images: request.Images.Select(i => i.Uri.ToString()).ToArray(),
             Location: new RequestLocationDto(request.Location.FullAddress,
-                new LatLongDto(request.Location.LatLong.Latitude, request.Location.LatLong.Longitude)));
+                new LatLongDto(request.Location.LatLong.Latitude, request.Location.LatLong.Longitude)),
+            ApprovalStatus: request.ApprovalStatus);
 }
