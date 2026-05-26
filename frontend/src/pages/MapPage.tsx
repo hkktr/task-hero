@@ -147,11 +147,9 @@ export default function MapPage() {
                 >
                   <div className="relative w-32 h-32 rounded-[8px] overflow-hidden shrink-0 bg-[#dfe3e4]">
                     <img src={request.images[0]} alt="" className="w-full h-full object-cover" />
-                    {/*
-                    TODO(v0idzz): Add type to SimplifiedRequest
-                    <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm text-[#1c6d25] text-[10px] font-semibold uppercase tracking-[0.5px] px-2 py-1 rounded-[6px]">
+                    <span className="absolute top-2 right-2 left-2 bg-white/90 backdrop-blur-sm text-[#1c6d25] text-[10px] font-semibold uppercase tracking-[0.5px] px-2 py-1 rounded-[6px]">
                       {t(`cat.${request.type}`)}
-                    </span> */}
+                    </span>
                   </div>
 
                   <div className="flex-1 flex flex-col justify-between h-32">

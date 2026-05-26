@@ -98,28 +98,26 @@ export default function CollectionPage() {
           <p className="text-center text-[#5b6061] py-10">{t('explore.noResults')}</p>
         ) : (
           <div className="grid grid-cols-3 gap-6">
-            {requests.map((req) => (
+            {requests.map((request) => (
               <Link
-                key={req.id}
-                to={`/request/${req.id}`}
+                key={request.id}
+                to={`/request/${request.id}`}
                 className="bg-white rounded-[16px] overflow-hidden flex flex-col hover:-translate-y-1 hover:shadow-md transition-all duration-200"
               >
                 <div className="relative h-52 bg-[#dfe3e4]">
-                  <img src={req.images[0]} alt="" className="w-full h-full object-cover" />
-                  {/*
-                  TODO(v0idzz): Add type to SimplifiedRequest
+                  <img src={request.images[0]} alt="" className="w-full h-full object-cover" />
                   <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm text-[#1c6d25] text-[10px] font-semibold uppercase tracking-[0.5px] px-2 py-1 rounded-[6px]">
                     {t(`cat.${request.type}`)}
-                  </span> */}
+                  </span>
                 </div>
 
                 <div className="p-4 flex flex-col gap-2">
-                  <h3 className="text-lg font-bold text-[#2f3334] line-clamp-1">{req.title}</h3>
+                  <h3 className="text-lg font-bold text-[#2f3334] line-clamp-1">{request.title}</h3>
                   <div className="flex items-center gap-1 text-[#5b6061] text-base">
                     <svg className="w-3 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                     </svg>
-                    <span className="line-clamp-1">{req.location.fullAddress}</span>
+                    <span className="line-clamp-1">{request.location.fullAddress}</span>
                   </div>
 
                   <div className="flex items-center justify-between mt-2">

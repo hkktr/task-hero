@@ -1,7 +1,7 @@
 import type { RequestType } from '../enums/request-type'
 import type { Coordinates } from './coordinates'
 
-export type SimplifiedRequest = Pick<Request, 'id' | 'title' | 'location' | 'images'>
+export type SimplifiedRequest = Pick<Request, 'id' | 'title' | 'type' | 'location' | 'images'>
 
 export interface Request {
   id: number
