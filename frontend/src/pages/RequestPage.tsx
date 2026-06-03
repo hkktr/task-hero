@@ -2,11 +2,12 @@ import { Link, useParams } from 'react-router-dom'
 import Header from '../components/Header'
 import { useLanguage } from '../context/LanguageContext'
 import { useEffect, useState } from 'react'
-import { getRequest } from '../api'
+import { getRequest, updateRequestApprovalStatus } from '../api'
 import type { Request } from '../interfaces/request'
 import Map, { Marker, NavigationControl } from 'react-map-gl/mapbox'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import ImageGalleryDialog from '../components/ImageGalleryDialog'
+import { APPROVAL_STATUSES, type ApprovalStatus } from '../enums/approval-status'
 
 export default function RequestPage() {
   const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
@@ -27,6 +28,14 @@ export default function RequestPage() {
       .catch((error) => console.error(error))
       .finally(() => setIsLoading(false))
   }, [id])
+
+  const updateApprovalStatus = (approvalStatus: ApprovalStatus) => {
+    if (id == null) return
+
+    updateRequestApprovalStatus(Number(id), approvalStatus)
+      .then(() => setRequest((request) => (request ? { ...request, approvalStatus } : request)))
+      .catch((error) => console.error(error))
+  }
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString(lang === 'pl' ? 'pl-PL' : 'en-US', {
@@ -76,6 +85,29 @@ export default function RequestPage() {
     <div className="min-h-screen bg-[#f9f9f9]">
       <Header />
 
+      {request.approvalStatus !== APPROVAL_STATUSES.APPROVED && (
+        <div className="px-8 pt-4 flex items-center gap-2 mb-6">
+          <div
+            className={`flex items-center gap-2 px-4 py-2 rounded-full ${
+              request.approvalStatus === APPROVAL_STATUSES.PENDING ? 'bg-amber-100' : 'bg-red-100'
+            }`}
+          >
+            <div
+              className={`w-2 h-2 rounded-full ${
+                request.approvalStatus === APPROVAL_STATUSES.PENDING ? 'bg-amber-500 animate-pulse' : 'bg-red-500'
+              }`}
+            />
+            <span
+              className={`text-xs font-semibold uppercase tracking-[1px] ${
+                request.approvalStatus === APPROVAL_STATUSES.PENDING ? 'text-amber-900' : 'text-red-700'
+              }`}
+            >
+              {t(`admin.approvalStatus.${request.approvalStatus}`)}
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Photo gallery */}
       <div className="cursor-pointer px-8" onClick={() => setIsGalleryOpen(true)}>
         <div className="relative w-full h-[400px] rounded-[32px] overflow-hidden bg-[#dfe3e4]">
@@ -118,7 +150,7 @@ export default function RequestPage() {
           <p className="text-lg text-[#5b6061] leading-7">{request.description}</p>
 
           {/* Community joining */}
-          {request.numberOfVolunteers > 0 && (
+          {request.approvalStatus === APPROVAL_STATUSES.APPROVED && request.numberOfVolunteers > 0 && (
             <div className="bg-[#f2f4f4] rounded-[32px] p-8 flex flex-col gap-6">
               <h3 className="text-xl font-bold text-[#2f3334]">
                 {t('point.community')} ({request.numberOfVolunteers})
@@ -178,26 +210,28 @@ export default function RequestPage() {
         {/* Right sidebar */}
         <div className="col-span-3 col-start-10 flex flex-col gap-8 self-start sticky top-8">
           {/* Organizer card */}
-          <div className="bg-white rounded-[32px] shadow-[0px_4px_24px_0px_rgba(0,0,0,0.04)] p-8 flex flex-col items-center gap-0">
-            <div className="w-24 h-24 rounded-full bg-[#dfe3e4] ring-4 ring-[#9df197] mb-4" />
-            <h4
-              className="text-xl text-[#111827] text-center leading-7 tracking-[-0.5px] mb-4"
-              style={{ fontFamily: 'Alata, sans-serif' }}
-            >
-              {request.requestedBy.nickname}
-            </h4>
+          {request.approvalStatus === APPROVAL_STATUSES.APPROVED && (
+            <div className="bg-white rounded-[32px] shadow-[0px_4px_24px_0px_rgba(0,0,0,0.04)] p-8 flex flex-col items-center gap-0">
+              <div className="w-24 h-24 rounded-full bg-[#dfe3e4] ring-4 ring-[#9df197] mb-4" />
+              <h4
+                className="text-xl text-[#111827] text-center leading-7 tracking-[-0.5px] mb-4"
+                style={{ fontFamily: 'Alata, sans-serif' }}
+              >
+                {request.requestedBy.nickname}
+              </h4>
 
-            <button
-              className="w-full py-4 rounded-[12px] text-lg font-semibold text-[#eaffe2] text-center mb-4 shadow-[0px_10px_15px_-3px_rgba(28,109,37,0.2)]"
-              style={{ background: 'linear-gradient(170deg, #1c6d25 0%, #096119 100%)' }}
-            >
-              {t('point.signUp')}
-            </button>
+              <button
+                className="w-full py-4 rounded-[12px] text-lg font-semibold text-[#eaffe2] text-center mb-4 shadow-[0px_10px_15px_-3px_rgba(28,109,37,0.2)]"
+                style={{ background: 'linear-gradient(170deg, #1c6d25 0%, #096119 100%)' }}
+              >
+                {t('point.signUp')}
+              </button>
 
-            <button className="w-full py-4 rounded-[12px] bg-[#dfe3e4] text-base font-semibold text-[#2f3334] text-center">
-              {t('point.contact')}
-            </button>
-          </div>
+              <button className="w-full py-4 rounded-[12px] bg-[#dfe3e4] text-base font-semibold text-[#2f3334] text-center">
+                {t('point.contact')}
+              </button>
+            </div>
+          )}
 
           {/* Date & time */}
           <div className="bg-[#f2f4f4] rounded-[32px] p-8">
@@ -221,6 +255,69 @@ export default function RequestPage() {
               </div>
             </div>
           </div>
+
+          {request.approvalStatus === APPROVAL_STATUSES.PENDING && (
+            <div className="w-full flex flex-col gap-3">
+              {/* Accept Card */}
+              <div className="bg-white rounded-[24px] p-6 flex flex-col gap-3 shadow-sm border border-[rgba(175,179,179,0.1)]">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-[rgba(157,241,151,0.3)] flex items-center justify-center">
+                    <svg
+                      className="w-4 h-4 text-[#1c6d25]"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2.5}
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                  </div>
+                  <p className="text-sm font-bold text-[#2f3334]">{t('review.accept')}</p>
+                </div>
+                <button
+                  onClick={() => updateApprovalStatus(APPROVAL_STATUSES.APPROVED)}
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-[12px] text-sm font-bold text-[#eaffe2] shadow-md cursor-pointer"
+                  style={{
+                    background: 'linear-gradient(135deg, #1c6d25 0%, #096119 100%)',
+                    fontFamily: 'Plus Jakarta Sans, sans-serif',
+                  }}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                  </svg>
+                  {t('review.accept')}
+                </button>
+              </div>
+
+              {/* Reject Card */}
+              <div className="bg-white rounded-[24px] p-6 flex flex-col gap-3 shadow-sm border border-[rgba(175,179,179,0.1)]">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-[rgba(255,102,102,0.1)] flex items-center justify-center">
+                    <svg
+                      className="w-4 h-4 text-[#ff6666]"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2.5}
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </div>
+                  <p className="text-sm font-bold text-[#2f3334]">{t('review.reject')}</p>
+                </div>
+                <button
+                  onClick={() => updateApprovalStatus(APPROVAL_STATUSES.REJECTED)}
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-[12px] text-sm font-bold text-[#5b6061] bg-[#f2f4f4] hover:bg-[#dfe3e4] transition-colors cursor-pointer"
+                  style={{ fontFamily: 'Plus Jakarta Sans, sans-serif' }}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  {t('review.reject')}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

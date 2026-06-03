@@ -6,7 +6,6 @@ import RegisterPage from './pages/RegisterPage'
 import MapPage from './pages/MapPage'
 import CollectionPage from './pages/CollectionPage'
 import RequestPage from './pages/RequestPage'
-import ReviewPage from './pages/ReviewPage'
 import AccountPage from './pages/AccountPage'
 import AdminPage from './pages/AdminPage'
 import PostStep1Page from './pages/PostStep1Page'
@@ -15,6 +14,7 @@ import PostStep3Page from './pages/PostStep3Page'
 import PostStep4Page from './pages/PostStep4Page'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
+import { USER_ROLES } from './enums/user-role'
 
 export default function App() {
   return (
@@ -38,9 +38,8 @@ export default function App() {
               <Route path="/post/4" element={<PostStep4Page />} />
               <Route path="/account" element={<AccountPage />} />
 
-              <Route element={<ProtectedRoute requiredRole="admin" />}>
+              <Route element={<ProtectedRoute requiredRole={USER_ROLES.ADMIN} />}>
                 <Route path="/admin" element={<AdminPage />} />
-                <Route path="/requests/review" element={<ReviewPage />} />
               </Route>
             </Route>
 

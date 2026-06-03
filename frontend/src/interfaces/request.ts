@@ -1,7 +1,8 @@
+import type { ApprovalStatus } from '../enums/approval-status'
 import type { RequestType } from '../enums/request-type'
 import type { Coordinates } from './coordinates'
 
-export type SimplifiedRequest = Pick<Request, 'id' | 'title' | 'type' | 'location' | 'images'>
+export type SimplifiedRequest = Pick<Request, 'id' | 'title' | 'type' | 'images' | 'location' | 'approvalStatus'>
 
 export interface Request {
   id: number
@@ -23,4 +24,5 @@ export interface Request {
     fullAddress: string
     latLong: Coordinates
   }
+  approvalStatus: ApprovalStatus
 }

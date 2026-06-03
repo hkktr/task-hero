@@ -1,4 +1,5 @@
 import { TOKEN_STORAGE_KEY } from './context/AuthContext'
+import { APPROVAL_STATUSES, type ApprovalStatus } from './enums/approval-status'
 import type { Coordinates } from './interfaces/coordinates'
 import type { Image } from './interfaces/image'
 import type { Request, SimplifiedRequest } from './interfaces/request'
@@ -6,7 +7,7 @@ import type { RequestFormPayload } from './interfaces/request-form'
 
 const BASE = 'https://task-hero-api.azurewebsites.net'
 
-export const register = async (nickname: string, emailAddress: string, password: string) => {
+export const register = async (nickname: string, emailAddress: string, password: string): Promise<void> => {
   const res = await fetch(`${BASE}/users/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -68,10 +69,13 @@ export const createRequest = async (form: RequestFormPayload): Promise<Request> 
   return res.json()
 }
 
-export const getRequests = async (): Promise<SimplifiedRequest[]> => {
+export const getRequests = async (options?: { approvalStatus?: ApprovalStatus }): Promise<SimplifiedRequest[]> => {
   const token = localStorage.getItem(TOKEN_STORAGE_KEY)
 
-  const res = await fetch(`${BASE}/requests`, {
+  const params = new URLSearchParams()
+  params.append('Status', (options?.approvalStatus ?? APPROVAL_STATUSES.APPROVED).toString())
+
+  const res = await fetch(`${BASE}/requests?${params}`, {
     headers: { Authorization: `Bearer ${token}` },
   })
   if (!res.ok) throw new Error('Failed to fetch requests')
@@ -88,6 +92,17 @@ export const getRequest = async (id: number): Promise<Request> => {
   if (!res.ok) throw new Error('Failed to fetch request details')
 
   return res.json()
+}
+
+export const updateRequestApprovalStatus = async (id: number, approvalStatus: ApprovalStatus): Promise<void> => {
+  const token = localStorage.getItem(TOKEN_STORAGE_KEY)
+
+  const res = await fetch(`${BASE}/requests/${id}/approval-status`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ approvalStatus }),
+  })
+  if (!res.ok) throw new Error('Failed to update approval status')
 }
 
 export const geocodeAddress = async (query: string): Promise<Coordinates | null> => {

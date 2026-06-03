@@ -28,36 +28,36 @@ export default function MapPage() {
 
     const bounds = requests.reduce(
       (bounds, request) => {
-        const {latitude, longitude} = request.location.latLong
+        const { latitude, longitude } = request.location.latLong
         return [
           Math.min(bounds[0], longitude),
           Math.min(bounds[1], latitude),
           Math.max(bounds[2], longitude),
           Math.max(bounds[3], latitude),
-        ];
+        ]
       },
       [
         Infinity, // minLongitude
         Infinity, // minLatitude
         -Infinity, // maxLongitude
         -Infinity, // maxLatitude
-      ]
-    );
+      ],
+    )
 
     mapRef.current.fitBounds(
       [
         [bounds[0], bounds[1]], // [minLongitude, minLatitude]
         [bounds[2], bounds[3]], // [maxLongitude, maxLatitude]
       ],
-      { padding: 250, duration: 2_500, maxZoom: 14 }
-    );
-  }, [requests]);
+      { padding: 250, duration: 2_500, maxZoom: 14 },
+    )
+  }, [requests])
 
   return (
-    <div className="min-h-screen bg-[#f9f9f9] flex flex-col">
+    <div className="h-screen bg-[#f9f9f9] flex flex-col overflow-hidden">
       <Header />
 
-      <main className="flex-1 flex flex-col gap-8 px-8 pb-8">
+      <main className="flex-1 flex flex-col gap-8 px-8 pb-8 overflow-hidden">
         {/* Hero + toggle */}
         <div className="flex items-end justify-between">
           <div className="flex flex-col gap-4 max-w-xl">
@@ -129,10 +129,12 @@ export default function MapPage() {
         </div> */}
 
         {/* Content: list + map */}
-        <div className="flex gap-8 flex-1 min-h-[600px]">
+        <div className="flex gap-8 flex-1 min-h-0">
           {/* Cards column */}
-          <div className="w-[420px] shrink-0 flex flex-col gap-6 overflow-y-auto pr-2">
-            <h2 className="text-xl font-bold text-[#2f3334]">{t('explore.count')} {requests && `(${requests.length})`}</h2>
+          <div className="w-[420px] shrink-0 flex flex-col gap-6 overflow-y-auto pr-2 pb-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#dfe3e4] [&::-webkit-scrollbar-thumb]:rounded-full">
+            <h2 className="text-xl font-bold text-[#2f3334] sticky top-0 bg-[#f9f9f9] z-10 pt-1 pb-3">
+              {t('explore.count')} {requests && `(${requests.length})`}
+            </h2>
 
             {!requests ? (
               <p className="text-sm text-[#5b6061]">{t('explore.loading')}</p>
