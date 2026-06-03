@@ -1,10 +1,12 @@
 import { createContext, useContext, useState, useEffect, type ReactNode, useMemo } from 'react'
 import { jwtDecode } from 'jwt-decode'
+import type { UserRole } from '../enums/user-role'
 
 export interface JwtUser {
   sub: string
   name: string
   email: string
+  role?: UserRole
   nbf: number
   exp: number
   iat: number

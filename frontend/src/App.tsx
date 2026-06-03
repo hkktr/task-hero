@@ -31,14 +31,17 @@ export default function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="/map" element={<MapPage />} />
               <Route path="/collection" element={<CollectionPage />} />
-              <Route path="/request/:id" element={<RequestPage />} />
-              <Route path="/review" element={<ReviewPage />} />
+              <Route path="/requests/:id" element={<RequestPage />} />
               <Route path="/post/1" element={<PostStep1Page />} />
               <Route path="/post/2" element={<PostStep2Page />} />
               <Route path="/post/3" element={<PostStep3Page />} />
               <Route path="/post/4" element={<PostStep4Page />} />
               <Route path="/account" element={<AccountPage />} />
-              <Route path="/admin" element={<AdminPage />} />
+
+              <Route element={<ProtectedRoute requiredRole="admin" />}>
+                <Route path="/admin" element={<AdminPage />} />
+                <Route path="/requests/review" element={<ReviewPage />} />
+              </Route>
             </Route>
 
             {/* Catch-all for unknown routes */}

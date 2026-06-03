@@ -183,7 +183,7 @@ export default function AdminPage() {
                 {/* Action */}
                 <div className="px-5 shrink-0">
                   <Link
-                    to="/review"
+                    to="/requests/review"
                     className="flex items-center gap-2 px-5 py-2.5 rounded-[12px] text-sm font-bold text-[#eaffe2] shadow-md"
                     style={{ background: 'linear-gradient(135deg, #1c6d25 0%, #096119 100%)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
                   >

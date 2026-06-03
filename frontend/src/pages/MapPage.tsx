@@ -142,7 +142,7 @@ export default function MapPage() {
               requests.map((request) => (
                 <Link
                   key={request.id}
-                  to={`/request/${request.id}`}
+                  to={`/requests/${request.id}`}
                   className="bg-white rounded-[12px] p-4 flex gap-4 items-start hover:-translate-y-1 hover:shadow-md transition-all duration-200"
                 >
                   <div className="relative w-32 h-32 rounded-[8px] overflow-hidden shrink-0 bg-[#dfe3e4]">
@@ -199,7 +199,7 @@ export default function MapPage() {
                   latitude={request.location.latLong.latitude}
                   color="#1c6d25"
                   style={{ cursor: 'pointer' }}
-                  onClick={() => navigate(`/request/${request.id}`)}
+                  onClick={() => navigate(`/requests/${request.id}`)}
                 />
               ))}
             </Map>

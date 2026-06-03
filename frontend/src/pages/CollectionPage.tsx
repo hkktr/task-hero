@@ -101,7 +101,7 @@ export default function CollectionPage() {
             {requests.map((request) => (
               <Link
                 key={request.id}
-                to={`/request/${request.id}`}
+                to={`/requests/${request.id}`}
                 className="bg-white rounded-[16px] overflow-hidden flex flex-col hover:-translate-y-1 hover:shadow-md transition-all duration-200"
               >
                 <div className="relative h-52 bg-[#dfe3e4]">
