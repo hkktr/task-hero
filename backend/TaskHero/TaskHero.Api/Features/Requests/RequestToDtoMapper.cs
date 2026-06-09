@@ -16,7 +16,8 @@ public static class RequestToDtoMapper
                 request.RequestDateTime.To),
             NumberOfVolunteers: request.NumberOfVolunteers,
             Images: request.Images.Select(i => i.Uri.ToString()).ToArray(),
-            RequestedBy: new UserSummaryDto(request.RequestedBy.Id, request.RequestedBy.Nickname),
+            RequestedBy: new UserSummaryDto(request.RequestedBy.Id, request.RequestedBy.Nickname,
+                request.RequestedBy.EmailAddress),
             Location: new RequestLocationDto(request.Location.FullAddress,
                 new LatLongDto(request.Location.LatLong.Latitude, request.Location.LatLong.Longitude)),
             ApprovalStatus: request.ApprovalStatus);
