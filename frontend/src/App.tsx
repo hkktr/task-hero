@@ -6,7 +6,6 @@ import RegisterPage from './pages/RegisterPage'
 import MapPage from './pages/MapPage'
 import CollectionPage from './pages/CollectionPage'
 import RequestPage from './pages/RequestPage'
-import AccountPage from './pages/AccountPage'
 import AdminPage from './pages/AdminPage'
 import PostStep1Page from './pages/PostStep1Page'
 import PostStep2Page from './pages/PostStep2Page'
@@ -36,7 +35,7 @@ export default function App() {
               <Route path="/post/2" element={<PostStep2Page />} />
               <Route path="/post/3" element={<PostStep3Page />} />
               <Route path="/post/4" element={<PostStep4Page />} />
-              <Route path="/account" element={<AccountPage />} />
+              {/* <Route path="/account" element={<AccountPage />} /> */}
 
               <Route element={<ProtectedRoute requiredRole={USER_ROLES.ADMIN} />}>
                 <Route path="/admin" element={<AdminPage />} />

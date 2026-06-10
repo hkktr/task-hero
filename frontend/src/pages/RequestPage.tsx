@@ -220,16 +220,20 @@ export default function RequestPage() {
                 {request.requestedBy.nickname}
               </h4>
 
-              <button
-                className="w-full py-4 rounded-[12px] text-lg font-semibold text-[#eaffe2] text-center mb-4 shadow-[0px_10px_15px_-3px_rgba(28,109,37,0.2)]"
-                style={{ background: 'linear-gradient(170deg, #1c6d25 0%, #096119 100%)' }}
-              >
-                {t('point.signUp')}
-              </button>
+              <a href={`mailto:${request.requestedBy.emailAddress}`} className="w-full">
+                <button
+                  className="w-full py-4 rounded-[12px] text-lg font-semibold text-[#eaffe2] text-center mb-4 shadow-[0px_10px_15px_-3px_rgba(28,109,37,0.2)]"
+                  style={{ background: 'linear-gradient(170deg, #1c6d25 0%, #096119 100%)' }}
+                >
+                  {t('point.signUp')}
+                </button>
+              </a>
 
-              <button className="w-full py-4 rounded-[12px] bg-[#dfe3e4] text-base font-semibold text-[#2f3334] text-center">
-                {t('point.contact')}
-              </button>
+              <a href={`mailto:${request.requestedBy.emailAddress}`} className="w-full">
+                <button className="w-full py-4 rounded-[12px] bg-[#dfe3e4] text-base font-semibold text-[#2f3334] text-center">
+                  {t('point.contact')}
+                </button>
+              </a>
             </div>
           )}
 

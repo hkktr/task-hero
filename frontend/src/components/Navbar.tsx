@@ -31,11 +31,11 @@ export default function Navbar() {
       </button>
 
       {/* Account icon */}
-      <Link to="/account" className="bg-white rounded-lg p-2 shrink-0">
+      {/* <Link to="/account" className="bg-white rounded-lg p-2 shrink-0">
         <svg className="w-5 h-5 text-[#1c1b1f]" fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
         </svg>
-      </Link>
+      </Link> */}
 
       {/* Admin link (dev) */}
       <Link to="/admin" className="bg-white rounded-lg px-3 py-2 text-[12px] text-black shrink-0">

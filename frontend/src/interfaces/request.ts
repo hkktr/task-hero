@@ -19,6 +19,7 @@ export interface Request {
   requestedBy: {
     id: number
     nickname: string
+    emailAddress: string
   }
   location: {
     fullAddress: string
