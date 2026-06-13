@@ -49,7 +49,7 @@ export default function MapPage() {
         [bounds[0], bounds[1]], // [minLongitude, minLatitude]
         [bounds[2], bounds[3]], // [maxLongitude, maxLatitude]
       ],
-      { padding: 250, duration: 2_500, maxZoom: 14 },
+      { padding: 50, duration: 2_500, maxZoom: 14 },
     )
   }, [requests])
 
